@@ -148,7 +148,7 @@ footer{padding:.6rem 1rem;border-top:2px solid var(--green-d);background:#020603
       <p class="sub">Registro de visitas</p>
       <button class="btn hot big pulse" id="start">▶ PRESS START</button>
       <p class="mini">(toca la pantalla para empezar)</p>
-      <p class="legal">Guardamos tu nombre y empresa, y una versión pixelada de tu foto. Nunca la original.</p>
+      <p class="legal">Guardamos tu nombre, tu empresa y el personaje que elijas.</p>
     </section>
 
     <!-- 1 · Datos -->
@@ -376,28 +376,53 @@ $('#back1').onclick = resetAll;
 $('#next').onclick = () => { if(valid()) { beep(880, .1); toChars(); } };
 $('#back2').onclick = () => go('form');
 
-/* ---- Personajes pixel art 16x16 (filas de 8 = se espejan; de 16 = tal cual) ---- */
-const PX = {k:'#0b0b0f', w:'#f4f4f4', s:'#f2b98d', S:'#c9855a', f:'#ffe3cf', r:'#e8242c', R:'#7a0e18',
-  b:'#2a5bd7', g:'#9aa0a6', G:'#4a4f58', y:'#ffd400', o:'#ff7a00', n:'#8a5428', N:'#4a2a12', h:'#19e6ff', e:'#2fbf4f'};
+/* ---- Personajes pixel art 24x24 (filas de 12 = se espejan; de 24 = tal cual) ---- */
+const PX = {k:'#0b0b0f', K:'#2c2c36', w:'#f4f4f4', W:'#c9ced4', g:'#9aa0a6', G:'#4a4f58', s:'#f2b98d', S:'#c9855a',
+  f:'#ffe3cf', F:'#dcb79c', r:'#e8242c', R:'#7a0e18', o:'#ff7a00', O:'#c05400', y:'#ffd400', b:'#2a5bd7',
+  h:'#19e6ff', e:'#2fbf4f', n:'#8a5428', N:'#4a2a12'};
 const CHARS = [
-  {id:'marty', name:'MARTY McFLY', bg:'#0b2a44', rows:['........','...nnnnn','..nnnnnn','.nnnnnnn','.nnsssss','.nssksss','.ssssssS','.ssssRww','..ssssss','...sssss','....ssss','..bbbooo','.bbbbooo','.bbboook','.bbboook','.bbboook']},
-  {id:'doc', name:'DOC BROWN', bg:'#2b1250', rows:['..w..ww.','.wwwwwww','wwwwwwww','wgwwwgww','wwGhhGww','wwssssss','wwsskkss','wwssssss','wwsssssS','wwsssRRR','.wwsssss','..wwssss','..wwwbbb','.wwwwwbb','.wwwwwwb','.wwwgwwb']},
-  {id:'neo', name:'NEO', bg:'#021a08', rain:true, rows:['........','...kkkkk','..kkkkkk','..kkkkkk','..kkssss','..ssssss','..skkkks','..ssssss','..ssssss','..ssssRR','...sssss','....ssss','.kkkkkss','kkkkkkkk','kkkgkkkk','kkkkkkkk']},
-  {id:'smith', name:'AGENTE SMITH', bg:'#021a08', rain:true, patches:[[2,7,'h'],[2,8,'h']], rows:['........','...kkkkk','..kkkkkk','..kkkkkk','..kfffff','..ffffff','..fkkkkf','..ffffff','..ffffff','..ffffRR','..ffffff','....ffff','.kkkkwww','.kkkkwwk','.kkkkkwk','.kkkkkkk']},
-  {id:'t800', name:'T-800', bg:'#3a0a0a', metal:[4,10], patches:[[10,5,'r'],[11,5,'r']], rows:['........','...kkkkk','..kkkkkk','..kkkkkk','..ksssss','..skkkks','..ssssss','..ssssss','..sssssS','..ssssRR','...sssss','....ssss','.kkkkkgs','kkkkkkkk','kkgkkkkk','kkkkkkkk']},
-  {id:'sheldon', name:'SHELDON', bg:'#1d3b2e', rows:['........','....NNNN','...NNNNN','..NNNNNN','..Nsssss','..ssssss','..sskkss','..ssssss','..sssssS','..sssRRs','...sssss','....ssss','..eeeess','.eeerrrr','.eeerryy','.eeerrrr']},
-  {id:'moss', name:'MOSS', bg:'#103a3a', rows:['..kkkkkk','.kkkkkkk','kkkkkkkk','kkkkkkkk','kkkfffff','kkfkkkkf','kkfkwwkf','kkfkkkkf','kkffffff','kkfffffR','.kkfffff','....ffff','..wwwwff','.wwwwwbb','.wwwwwwb','.wwwwwwb']},
-  {id:'roy', name:'ROY', bg:'#2f2f3a', rows:['..k.kk.k','..kkkkkk','..kkkkkk','..kkkkkk','..ksssss','..kkkkss','..sskkss','..ssssss','..sssssS','..SSSSRR','..SSSSSS','....ssss','.GGGGGss','.GGGGGGG','.GGGGGww','.GGGGGGw']}
+  {id:'marty', name:'MARTY McFLY', bg:'#0b2a44', rows:[
+    '............','............','......nnnnnn','....nnnnnnnn','...nnnnNnnnn','...nnnnnnnnn','...nnnssssss','...nnsssssss',
+    '...nnsNNNsss','...nnswkwsss','...nnsssssss','...nnssssssS','...nnsssssss','....sssssRRR','....sssssRww','....ssssssRR',
+    '......ssssss','........ssss','..bbbboooows','.bbbbbooooOk','bbbbbbooooOk','bbbbbbooooOk','bbbbbbooooOk','bbbbbbooooOk']},
+  {id:'doc', name:'DOC BROWN', bg:'#2b1250', rows:[
+    '....w..w..ww','..wwwwwwwwww','.wwwwWwwwwww','wwwwwwwwwwww','wwwwwwWwwwww','wwwwwwwwwwww','wwwwwGGGGGGG','wwwwwGhhhhGG',
+    'wwwwwGGGGGGG','wwwwssssssss','wwwwsWWWssss','wwwwsswkwsss','wwwwssssssss','wwwwsssssssS','wwwwssssssss','wwwwssssRRRR',
+    'wwwwsssRRRRR','wwwwwwssssss','wwwwwwwwbbbs','.wwwwwwwwbbb','.wwwwwwwwwbb','.wwwWwwwwwbb','.wwwwwwwwwwb','.wwwwwwwwwwb']},
+  {id:'neo', name:'NEO', bg:'#021a08', rain:true, rows:[
+    '............','............','.......kkkkk','......kkkkkk','.....kkkkkkk','.....kkkkkkk','.....kssssss','.....sssssss',
+    '.....skkkkks','.....skkkkks','.....sssssss','.....ssssssS','.....sssssss','.....sssssss','.....ssssRRR','......ssssss',
+    '.......sssss','........ssss','...kkkkkkkss','..kkkkkkkkKk','.kkkkkkkkKkk','.kkkkkkkKkkk','.kkkkkkKkkkk','.kkkkkKkkkkk']},
+  {id:'smith', name:'AGENTE SMITH', bg:'#021a08', rain:true, patches:[[5,10,'h'],[5,11,'K'],[5,12,'K'],[5,13,'K']], rows:[
+    '............','............','.......kkkkk','......kkkkkk','.....kkkkkkk','.....kkkkkkk','.....kffffff','.....fffffff',
+    '.....fkkkkkf','.....fkkkkkf','.....fffffff','.....ffffffF','.....fffffff','.....fffffff','.....ffffGGG','......ffffff',
+    '.......fffff','........ffff','...kkkkkwwff','..kkkkkkwwwk','.kkkkkkkwwwk','.kkkkkkkkwwk','.kkkkkkkkkwk','.kkkkkkkkkkk']},
+  {id:'t800', name:'T-800', bg:'#3a0a0a', metal:[6,17], patches:[[15,8,'r'],[16,8,'r'],[15,9,'r'],[16,9,'r'],[12,14,'W'],[13,14,'W'],[14,14,'W']], rows:[
+    '............','............','.......kkkkk','......kkkkkk','.....kkkkkkk','.....kkkkkkk','.....kssssss','.....sssssss',
+    '.....skkkkks','.....skkkkks','.....sssssss','.....ssssssS','.....sssssss','.....sssssss','.....ssssRRR','......ssssss',
+    '.......sssss','........ssss','...kkkkkkkss','..kGGkkkkkkk','.kGGkkkkkkkk','.kGkkkkkkkkk','.kkkkkkkkkkG','.kkkkkkkkkkG']},
+  {id:'sheldon', name:'SHELDON', bg:'#1d3b2e', rows:[
+    '............','............','......NNNNNN','.....NNNNNNN','.....NNNNNNN','.....NNNNNNN','.....Nssssss','.....sssssss',
+    '.....sNNNsss','.....swkwsss','.....swkwsss','.....sssssss','.....ssssssS','.....sssssss','.....ssssRRR','......ssssss',
+    '.......sssss','........ssss','..eeeeeeeess','.eeeerrrrrrr','.eeeerrrrwww','.eeeerrrwwyy','.eeeerrrwyyw','.eeeerrrrwww']},
+  {id:'moss', name:'MOSS', bg:'#103a3a', rows:[
+    '....kkkkkkkk','..kkkkkkkkkk','.kkkkKkkkkkk','.kkkkkkkKkkk','kkkKkkkkkkkk','kkkkkkKkkkkk','kkkkkkkkkkkk','kkkkffffffff',
+    'kkkkfkkkkkkf','kkkkfkwkwwkf','kkkkfkwwwwkf','kkkkfkkkkkkf','kkkkfffffffF','kkkkffffffff','kkkkffffffRR','.kkkkfffffff',
+    '...kkfffffff','........ffff','..wwwwwwwwff','.wwwwwwwwwbb','.wWwwwwwwwwb','.wwwwwwwwwwb','.wwwwwwwwwwb','.wwwwwwwwwwb']},
+  {id:'roy', name:'ROY', bg:'#26303a', rows:[
+    '....k.k.kk.k','...kkkkkkkkk','..kkkkkkkkkk','..kkkkKkkkkk','..kkkkkkkkkk','..kkkkkkkkkk','..kkssssssss','..kkssssssss',
+    '..kkskkkksss','..kksswkwsss','..kkssSSssss','..kkssssssss','..kksssssssS','..kkSsSsSsSs','...kSSSSRRRR','....SSSSSSSS',
+    '.....SSSSSSS','........ssss','..GGGGGGGGss','.GGGGGGGGGGG','.GGGGGGGGwww','.GGGGGGGGwGw','.GGGGGGGGwww','.GGGGGGGGGGG']}
 ];
 function buildSprite(ch){
-  const c = document.createElement('canvas'); c.width = c.height = 16;
-  const x = c.getContext('2d'); x.fillStyle = ch.bg; x.fillRect(0, 0, 16, 16);
-  if(ch.rain) for(let y = 0; y < 16; y++) for(let i = 0; i < 16; i++){
+  const N = 24, c = document.createElement('canvas'); c.width = c.height = N;
+  const x = c.getContext('2d'); x.fillStyle = ch.bg; x.fillRect(0, 0, N, N);
+  if(ch.rain) for(let y = 0; y < N; y++) for(let i = 0; i < N; i++){
     if((i * 37 + y * 11) % 9 === 0){ x.fillStyle = '#0a4d1c'; x.fillRect(i, y, 1, 1); }
     if((i * 17 + y * 5) % 13 === 0){ x.fillStyle = '#00c534'; x.fillRect(i, y, 1, 1); }
   }
-  const g = ch.rows.map(r => [...(r.length === 8 ? r + [...r].reverse().join('') : r)]);
-  if(ch.metal) for(let y = ch.metal[0]; y <= ch.metal[1]; y++) for(let i = 8; i < 16; i++) if(g[y][i] === 's' || g[y][i] === 'S') g[y][i] = 'g';
+  const g = ch.rows.map(r => [...(r.length === N / 2 ? r + [...r].reverse().join('') : r)]);
+  if(ch.metal) for(let y = ch.metal[0]; y <= ch.metal[1]; y++) for(let i = N / 2; i < N; i++) if(g[y][i] === 's' || g[y][i] === 'S') g[y][i] = 'g';
   (ch.patches || []).forEach(([i, y, v]) => g[y][i] = v);
   g.forEach((row, y) => row.forEach((v, i) => { if(v !== '.'){ x.fillStyle = PX[v]; x.fillRect(i, y, 1, 1); } }));
   return c;
@@ -405,8 +430,8 @@ function buildSprite(ch){
 /* ---- Selección de personaje ---- */
 let avatarURL = '';
 function exportFrom(src){
-  const o = document.createElement('canvas'); o.width = o.height = 224;
-  const q = o.getContext('2d'); q.imageSmoothingEnabled = false; q.drawImage(src, 0, 0, 224, 224);
+  const o = document.createElement('canvas'); o.width = o.height = 240;
+  const q = o.getContext('2d'); q.imageSmoothingEnabled = false; q.drawImage(src, 0, 0, 240, 240);
   return o.toDataURL('image/png');
 }
 const charsEl = $('#chars');
