@@ -62,8 +62,6 @@ h2{font-size:1.5rem;color:#fff;text-shadow:0 0 1rem var(--green)}
 .nav{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap}
 .pulse{animation:pulse 1.1s infinite}
 @keyframes pulse{50%{transform:scale(1.05);box-shadow:0 .3rem 0 #8a0f78,0 0 3rem #ff2bd6}}
-.v{display:none}
-[data-state=live] .v-live,[data-state=shot] .v-shot,[data-state=nocam] .v-nocam{display:inline-flex}
 
 /* Atracción */
 .floaties{display:flex;gap:1.4rem;font-size:3.2rem;margin:.4rem 0}
@@ -90,21 +88,8 @@ h2{font-size:1.5rem;color:#fff;text-shadow:0 0 1rem var(--green)}
 .k.on{background:var(--amber);color:#000;border-color:var(--amber)}
 .k.act{background:var(--pink);color:#fff;border-color:var(--pink);font-size:1.4rem;flex:2}
 
-/* Foto */
-.viewfinder{position:relative;height:min(34rem,46vh);aspect-ratio:1;border:4px solid var(--green);box-shadow:0 0 2.5rem #00ff4177;background:#000}
-.viewfinder canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
-.hud{position:absolute;inset:.6rem;pointer-events:none;color:var(--red);font-size:1.15rem;text-align:left;text-shadow:0 0 .4rem var(--red)}
-.hud .c{position:absolute;width:2.2rem;height:2.2rem;border:3px solid var(--red)}
-.hud .tl{left:0;top:0;border-right:0;border-bottom:0}.hud .tr{right:0;top:0;border-left:0;border-bottom:0}
-.hud .bl{left:0;bottom:0;border-right:0;border-top:0}.hud .br{right:0;bottom:0;border-left:0;border-top:0}
-.hudtxt{position:absolute;left:2.8rem;top:.6rem;line-height:1.05;background:#0008;padding:.1rem .3rem}
-.hudtxt b{animation:blink 1s steps(1) infinite;font-weight:400}
-.count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--px);font-size:9rem;color:#fff;text-shadow:0 0 2rem var(--pink),.3rem .3rem 0 var(--pink)}
-.mph{position:absolute;bottom:-.1rem;left:50%;transform:translate(-50%,100%);font-family:var(--px);font-size:.8rem;color:var(--amber);white-space:nowrap;padding-top:.6rem}
-#flash{position:fixed;inset:0;z-index:60;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-family:var(--px);font-size:2.4rem;opacity:0;pointer-events:none;transition:opacity .45s}
-#flash.on{opacity:1;transition:none}
-
 /* Personajes */
+.char.sel{border-color:var(--pink);box-shadow:0 0 1.2rem #ff2bd6aa}
 .chars{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;width:min(52rem,100%)}
 @media (orientation:portrait){.chars{grid-template-columns:repeat(3,1fr)}}
 .char{background:var(--panel);border:3px solid var(--green-d);padding:.6rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;border-radius:.3rem}
@@ -160,7 +145,7 @@ footer{padding:.6rem 1rem;border-top:2px solid var(--green-d);background:#020603
     <!-- 0 · Atracción -->
     <section class="screen on" id="s-attract">
       <h1>BIENVENIDO/A<br>AL FUTURO</h1>
-      <p class="sub">Registro de visitas · 3 pasos · 30 segundos</p>
+      <p class="sub">Registro de visitas</p>
       <button class="btn hot big pulse" id="start">▶ PRESS START</button>
       <p class="mini">(toca la pantalla para empezar)</p>
       <p class="legal">Guardamos tu nombre y empresa, y una versión pixelada de tu foto. Nunca la original.</p>
@@ -177,33 +162,14 @@ footer{padding:.6rem 1rem;border-top:2px solid var(--green-d);background:#020603
       </div>
     </section>
 
-    <!-- 2 · Foto -->
-    <section class="screen" id="s-photo" data-state="live">
-      <div class="stephead"><span class="chip">PASO 2/3</span><h2>¡SONRÍE! TE CONVERTIMOS EN PÍXELES</h2></div>
-      <p class="sub" id="photoSub">Tu foto se pixela al instante. La original nunca se guarda.</p>
-      <div class="viewfinder">
-        <canvas id="cam" width="448" height="448"></canvas>
-        <div class="hud"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
-          <div class="hudtxt">TARGET: VISITANTE<br>AMENAZA: 0% ☺<br>ANONIMIZACIÓN: <b>ON</b></div></div>
-        <div class="count" id="count"></div>
-      </div>
-      <div class="nav">
-        <button class="btn ghost" id="back2">◀ ATRÁS</button>
-        <button class="btn hot v v-live pulse" id="shoot">📸 ¡FOTO!</button>
-        <button class="btn ghost v v-shot" id="retake">↺ REPETIR</button>
-        <button class="btn go v v-shot" id="ok">✔ ME GUSTA</button>
-        <button class="btn ghost v v-live" id="pick">★ PERSONAJE</button>
-        <button class="btn ghost v v-nocam" id="pick2">★ ELEGIR PERSONAJE</button>
-        <button class="btn ghost v v-nocam" id="another">↻ AL AZAR</button>
-        <button class="btn go v v-nocam" id="ok2">✔ CONTINUAR</button>
-      </div>
-    </section>
-
-    <!-- 2b · Personajes -->
+    <!-- 2 · Personaje -->
     <section class="screen" id="s-chars">
       <div class="stephead"><span class="chip">PASO 2/3</span><h2>ELIGE TU PERSONAJE</h2></div>
       <div class="chars" id="chars"></div>
-      <div class="nav"><button class="btn ghost" id="backChars">◀ VOLVER A LA CÁMARA</button></div>
+      <div class="nav">
+        <button class="btn ghost" id="back2">◀ ATRÁS</button>
+        <button class="btn go" id="ok" disabled>✔ CONFIRMAR</button>
+      </div>
     </section>
 
     <!-- 3 · Pase -->
@@ -220,7 +186,6 @@ footer{padding:.6rem 1rem;border-top:2px solid var(--green-d);background:#020603
   <footer><span id="quote"></span></footer>
 </div>
 
-<div id="flash">¡GRAN SCOTT!</div>
 <div id="toast"></div>
 
 <div class="overlay" id="admin"><div class="panel" id="adminBox"></div></div>
@@ -320,7 +285,6 @@ let screen = 'attract', idleT, doneT;
 function go(name, keep){
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === 's-' + name));
   screen = name;
-  if(name === 'photo'){ if(!keep) startCam(); } else stopCam();
   resetIdle();
 }
 function resetIdle(){
@@ -331,7 +295,7 @@ document.addEventListener('pointerdown', resetIdle);
 document.addEventListener('contextmenu', e => e.preventDefault());
 function resetAll(){
   clearInterval(doneT);
-  data = {name:'', company:''}; active = 0; shift = accent = false; avatarURL = '';
+  data = {name:'', company:''}; active = 0; shift = accent = false; clearPick();
   renderForm(); go('attract');
 }
 
@@ -376,7 +340,7 @@ function press(k){
   if(k === '⌫'){ data[f] = v.slice(0, -1); accent = false; }
   else if(k === '⇧'){ shift = !shift; }
   else if(k === '´'){ accent = !accent; }
-  else if(k === '↵'){ if(active < 1) active++; else if(valid()) return toPhoto(); }
+  else if(k === '↵'){ if(active < 1) active++; else if(valid()) return toChars(); }
   else if(v.length < MAX){
     let c = k === 'ESPACIO' ? ' ' : k;
     if(/^[A-ZÑ]$/.test(c)){
@@ -402,74 +366,16 @@ function renderForm(){
   });
   $('#next').disabled = !valid();
 }
-function toPhoto(){
-  const first = data.name.trim().split(/\s+/)[0].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+function toChars(){
+  const first = data.name.trim().split(/\s+/)[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   if(EGGS[first]) toast(EGGS[first]);
-  go('photo');
+  go('chars');
 }
 $('#start').onclick = () => { jingle(); renderForm(); go('form'); };
 $('#back1').onclick = resetAll;
-$('#next').onclick = () => { if(valid()) { beep(880, .1); toPhoto(); } };
+$('#next').onclick = () => { if(valid()) { beep(880, .1); toChars(); } };
 $('#back2').onclick = () => go('form');
 
-/* ============ Cámara + anonimización (pixel art Matrix) ============ */
-const G = CONFIG.grid;
-const PAL = [[0,14,4],[0,52,15],[0,105,30],[0,170,48],[0,255,65],[190,255,205]];
-const cam = $('#cam'), cx = cam.getContext('2d');
-const sm = document.createElement('canvas'); sm.width = sm.height = G;
-const sx = sm.getContext('2d', {willReadFrequently:true});
-const vid = document.createElement('video'); vid.playsInline = true; vid.muted = true;
-const photoSec = $('#s-photo');
-let stream = null, raf = 0, frozen = false, shooting = false, avatarURL = '', lastDraw = 0;
-
-function setState(s){ photoSec.dataset.state = s; }
-async function startCam(){
-  frozen = false; shooting = false; avatarURL = ''; $('#count').textContent = '';
-  $('#photoSub').textContent = 'Tu foto se pixela al instante. La original nunca se guarda.';
-  setState('live');
-  cx.fillStyle = '#000'; cx.fillRect(0, 0, cam.width, cam.height);
-  try{
-    const s = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user', width:{ideal:640}, height:{ideal:480}}, audio:false});
-    if(screen !== 'photo'){ s.getTracks().forEach(t => t.stop()); return; }
-    stream = s; vid.srcObject = s; await vid.play(); loop();
-  }catch(e){
-    $('#photoSub').textContent = 'Sin cámara disponible: te asignamos un avatar pixelado.';
-    makeCharacter(); setState('nocam');
-  }
-}
-function stopCam(){
-  cancelAnimationFrame(raf);
-  if(stream){ stream.getTracks().forEach(t => t.stop()); stream = null; }
-  vid.srcObject = null; shooting = false;
-}
-function loop(t = 0){
-  raf = requestAnimationFrame(loop);
-  if(frozen || t - lastDraw < 66) return;
-  lastDraw = t; drawFrame();
-}
-function drawFrame(){
-  const w = vid.videoWidth, h = vid.videoHeight; if(!w) return;
-  const s = Math.min(w, h);
-  sx.save(); sx.translate(G, 0); sx.scale(-1, 1);
-  sx.drawImage(vid, (w - s) / 2, (h - s) / 2, s, s, 0, 0, G, G); sx.restore();
-  const img = sx.getImageData(0, 0, G, G), d = img.data, n = G * G, lum = new Float32Array(n);
-  let mn = 255, mx = 0;
-  for(let i = 0; i < n; i++){
-    const l = .3 * d[i*4] + .59 * d[i*4+1] + .11 * d[i*4+2]; lum[i] = l; if(l < mn) mn = l; if(l > mx) mx = l;
-  }
-  const rng = (mx - mn) || 1;
-  for(let i = 0; i < n; i++){
-    const c = PAL[Math.min(PAL.length - 1, ((lum[i] - mn) / rng * PAL.length) | 0)];
-    d[i*4] = c[0]; d[i*4+1] = c[1]; d[i*4+2] = c[2]; d[i*4+3] = 255;
-  }
-  sx.putImageData(img, 0, 0);
-  cx.imageSmoothingEnabled = false; cx.drawImage(sm, 0, 0, cam.width, cam.height);
-}
-function exportFrom(src){
-  const o = document.createElement('canvas'); o.width = o.height = 224;
-  const q = o.getContext('2d'); q.imageSmoothingEnabled = false; q.drawImage(src, 0, 0, 224, 224);
-  return o.toDataURL('image/png');
-}
 /* ---- Personajes pixel art 16x16 (filas de 8 = se espejan; de 16 = tal cual) ---- */
 const PX = {k:'#0b0b0f', w:'#f4f4f4', s:'#f2b98d', S:'#c9855a', f:'#ffe3cf', r:'#e8242c', R:'#7a0e18',
   b:'#2a5bd7', g:'#9aa0a6', G:'#4a4f58', y:'#ffd400', o:'#ff7a00', n:'#8a5428', N:'#4a2a12', h:'#19e6ff', e:'#2fbf4f'};
@@ -496,45 +402,28 @@ function buildSprite(ch){
   g.forEach((row, y) => row.forEach((v, i) => { if(v !== '.'){ x.fillStyle = PX[v]; x.fillRect(i, y, 1, 1); } }));
   return c;
 }
-let lastChar = null;
-function showChar(ch){
-  lastChar = ch; const c = buildSprite(ch);
-  cx.imageSmoothingEnabled = false; cx.drawImage(c, 0, 0, cam.width, cam.height);
-  avatarURL = exportFrom(c); frozen = true;
-}
-function makeCharacter(){
-  const pool = CHARS.filter(c => c !== lastChar);
-  showChar(pool[Math.random() * pool.length | 0]);
+/* ---- Selección de personaje ---- */
+let avatarURL = '';
+function exportFrom(src){
+  const o = document.createElement('canvas'); o.width = o.height = 224;
+  const q = o.getContext('2d'); q.imageSmoothingEnabled = false; q.drawImage(src, 0, 0, 224, 224);
+  return o.toDataURL('image/png');
 }
 const charsEl = $('#chars');
+function clearPick(){
+  avatarURL = ''; $('#ok').disabled = true;
+  [...charsEl.children].forEach(x => x.classList.remove('sel'));
+}
 CHARS.forEach(ch => {
   const b = document.createElement('button'); b.className = 'char';
   b.innerHTML = `<img src="${buildSprite(ch).toDataURL()}" alt=""><span>${ch.name}</span>`;
   b.onclick = () => {
-    stopCam(); showChar(ch); beep(880, .1); setState('shot');
-    $('#photoSub').textContent = `¡Eres ${ch.name}! Buena elección.`;
-    go('photo', true);
+    clearPick(); b.classList.add('sel'); $('#ok').disabled = false;
+    avatarURL = exportFrom(buildSprite(ch)); beep(880, .1);
   };
   charsEl.appendChild(b);
 });
-$('#pick').onclick = $('#pick2').onclick = () => { beep(600, .06); go('chars'); };
-$('#backChars').onclick = () => go('photo');
-async function shoot(){
-  if(shooting) return; shooting = true; setState('count');
-  for(const n of [3, 2, 1]){
-    $('#count').textContent = n; beep(440, .15);
-    await sleep(850); if(screen !== 'photo') return;
-  }
-  $('#count').textContent = ''; beep(1200, .25);
-  drawFrame(); frozen = true; avatarURL = exportFrom(sm);
-  const fl = $('#flash'); fl.classList.add('on'); setTimeout(() => fl.classList.remove('on'), 120);
-  shooting = false; setState('shot');
-  $('#photoSub').textContent = '¡Así quedas en el sistema! Anónimo/a y con estilo.';
-}
-$('#shoot').onclick = shoot;
-$('#retake').onclick = () => { if(stream){ frozen = false; setState('live'); $('#photoSub').textContent = 'Tu foto se pixela al instante. La original nunca se guarda.'; } else startCam(); };
-$('#another').onclick = () => { makeCharacter(); beep(700, .08); };
-$('#ok').onclick = $('#ok2').onclick = register;
+$('#ok').onclick = register;
 
 /* ============ Registro + pase ============ */
 const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
