@@ -200,7 +200,8 @@ const CONFIG = {
   webhookUrl: '',           // opcional: POST JSON con cada registro (Slack, Teams, n8n...)
   projector: {              // controladora de proyectores: actualiza el "Welcome text" con la empresa
     baseUrl: 'http://192.168.1.82:8080',   // vacío ('') para desactivarlo
-    welcomeId: 'wellcomeName'              // id del campo (así, con dos "l", lo llama la controladora)
+    welcomeId: 'wellcomeName',             // id del campo (así, con dos "l", lo llama la controladora)
+    bridgeUrl: 'http://localhost:8123'     // puente local del tótem (carpeta puente/); vacío para ir directo
   },
   grid: 28                  // resolución del pixelado (menor = más anónimo)
 };
@@ -460,9 +461,14 @@ const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',
    pero la petición llega y se aplica igual (solo el navegador oculta la respuesta). */
 function sendWelcome(texto, intento = 1){
   const p = CONFIG.projector; if(!p || !p.baseUrl || !texto) return;
-  const url = `${p.baseUrl}/update?id=${encodeURIComponent(p.welcomeId)}&value=${encodeURIComponent(texto)}`;
-  const ctl = new AbortController(); setTimeout(() => ctl.abort(), 4000);
-  fetch(url, {mode:'no-cors', signal:ctl.signal}).catch(() => {
+  const directa = `${p.baseUrl}/update?id=${encodeURIComponent(p.welcomeId)}&value=${encodeURIComponent(texto)}`;
+  const puente = p.bridgeUrl ? `${p.bridgeUrl}/welcome?value=${encodeURIComponent(texto)}` : '';
+  const get = url => {
+    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 4000);
+    return fetch(url, {mode:'no-cors', signal:ctl.signal});
+  };
+  // primero el puente local; si no está, directo a la controladora
+  (puente ? get(puente).catch(() => get(directa)) : get(directa)).catch(() => {
     if(intento < 3) setTimeout(() => sendWelcome(texto, intento + 1), 2000 * intento);
   });
 }

@@ -1,0 +1,26 @@
+PUENTE TOTEM -> CONTROLADORA DE PROYECTORES
+
+Para que, al registrarse una visita, el "Welcome text" de los proyectores
+se actualice con el nombre de su empresa.
+
+INSTALACION (una sola vez, en el PC del totem, que debe estar en el WiFi de la sala)
+  1. Copia esta carpeta "puente" al totem (por ejemplo a C:\puente).
+  2. Doble clic en instalar-arranque.bat
+  3. Comprueba: abre http://localhost:8123/ping en un navegador.
+     Si no da error de conexion, el puente esta en marcha.
+
+A partir de ahi arranca solo al iniciar sesion en Windows.
+
+AJUSTES
+  Los datos de la controladora estan al principio de puente.ps1
+  ($Controladora = IP y puerto, $CampoId = wellcomeName).
+
+SI ALGO FALLA
+  Mira puente.log (en esta carpeta): cada actualizacion queda anotada, con OK o ERROR.
+  - "ERROR ... controladora": el totem no llega a 192.168.1.82:8080 (revisa el WiFi).
+  - Sin lineas nuevas al registrar: la web no llega al puente (el reproductor
+    bloquea localhost) y hay que usar otra via.
+
+PARA QUITARLO
+  Borra "puente-proyectores.bat" de la carpeta de inicio de Windows
+  (Win+R -> shell:startup) y termina el proceso powershell desde el Administrador de tareas.
