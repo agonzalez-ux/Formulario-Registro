@@ -198,6 +198,10 @@ const CONFIG = {
   doneSeconds: 20,          // tiempo que se muestra el pase final
   adminPin: '1985',         // PIN del panel de administración (toca 5 veces el logo)
   webhookUrl: '',           // opcional: POST JSON con cada registro (Slack, Teams, n8n...)
+  projector: {              // controladora de proyectores: actualiza el "Welcome text" con la empresa
+    baseUrl: 'http://192.168.1.82:8080',   // vacío ('') para desactivarlo
+    welcomeId: 'wellcomeName'              // id del campo (así, con dos "l", lo llama la controladora)
+  },
   grid: 28                  // resolución del pixelado (menor = más anónimo)
 };
 const QUOTES = [
@@ -452,6 +456,16 @@ $('#ok').onclick = register;
 
 /* ============ Registro + pase ============ */
 const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* Envía a la controladora el texto de bienvenida. 'no-cors': la controladora no envía cabeceras CORS,
+   pero la petición llega y se aplica igual (solo el navegador oculta la respuesta). */
+function sendWelcome(texto, intento = 1){
+  const p = CONFIG.projector; if(!p || !p.baseUrl || !texto) return;
+  const url = `${p.baseUrl}/update?id=${encodeURIComponent(p.welcomeId)}&value=${encodeURIComponent(texto)}`;
+  const ctl = new AbortController(); setTimeout(() => ctl.abort(), 4000);
+  fetch(url, {mode:'no-cors', signal:ctl.signal}).catch(() => {
+    if(intento < 3) setTimeout(() => sendWelcome(texto, intento + 1), 2000 * intento);
+  });
+}
 function register(){
   if(!avatarURL) return;
   const lista = store.get('visitas', []), n = store.get('contador', 0) + 1;
@@ -459,6 +473,7 @@ function register(){
   const rec = {id:n, nombre:data.name.trim(), empresa:data.company.trim(), fecha:now.toISOString(), avatar:avatarURL};
   lista.push(rec); store.set('visitas', lista); store.set('contador', n);
   if(CONFIG.webhookUrl) fetch(CONFIG.webhookUrl, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(rec)}).catch(() => {});
+  sendWelcome(rec.empresa || rec.nombre);
   $('#last').textContent = circuit(now);
   $('#doneSub').textContent = 'Ya estás en el sistema. Ya puedes sentarte. 📟';
   $('#badge').innerHTML = `
